@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste de Imagens</title>
+</head>
+<body>
+  <h1>Teste de Carregamento de Imagens</h1>
+  <div id="results"></div>
+
+  <script>
+    const API_URL = "http://localhost:3000/rituais";
+
+    async function testarImagens() {
+      const resultsDiv = document.getElementById('results');
+      
+      try {
+        const response = await fetch(API_URL);
+        const rituais = await response.json();
+        
+        console.log('Total de rituais:', rituais.length);
+        
+        rituais.forEach(ritual => {
+          const div = document.createElement('div');
+          div.style.marginBottom = '10px';
+          
+          const img = new Image();
+          img.style.width = '50px';
+          img.style.height = '50px';
+          img.style.objectFit = 'cover';
+          
+          img.onload = () => {
+            div.innerHTML = `✅ <strong>${ritual.nome}</strong> (${ritual.id}) - <span style="color: green">OK</span>`;
+            div.prepend(img);
+          };
+          
+          img.onerror = () => {
+            div.innerHTML = `❌ <strong>${ritual.nome}</strong> (${ritual.id}) - <span style="color: red">FALTANDO: assets/${ritual.id}.webp</span>`;
+          };
+          
+          img.src = `assets/${ritual.id}.webp`;
+          resultsDiv.appendChild(div);
+        });
+        
+      } catch (error) {
+        console.error('Erro:', error);
+        resultsDiv.innerHTML = `<p style="color: red">Erro: ${error.message}</p>`;
+      }
+    }
+
+    testarImagens();
+  </script>
+</body>
+</html>
+

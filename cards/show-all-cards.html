@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Todas as Cartas - Ordem Paranormal</title>
+    <style>
+      /* card.css */
+      :root {
+        --card-w: 420px;
+        --card-h: 640px;
+
+        --paper: #f3efe7;
+        --ink: #1b1b1b;
+
+        --border-outer: #3b3b3b;
+        --border-inner: #bdb7ad;
+
+        --radius: 24px;
+        --radius-inner: 16px;
+
+        /* Tipografia (12–18) */
+        --fs-12: 10px;
+        --fs-14: 12px;
+        --fs-16: 14px;
+        --fs-18: 16px;
+
+        --gap: 8px;
+
+        /* Arte */
+        --art: 128px;
+      }
+
+      /* Cores dos elementos */
+      .card--conhecimento {
+        --accent: #eab308;
+        --accent-soft: rgba(234, 179, 8, 0.12);
+      }
+
+      .card--energia {
+        --accent: #7c3aed;
+        --accent-soft: rgba(124, 58, 237, 0.12);
+      }
+
+      .card--morte {
+        --accent: #18181b;
+        --accent-soft: rgba(24, 24, 27, 0.12);
+      }
+
+      .card--sangue {
+        --accent: #dc2626;
+        --accent-soft: rgba(220, 38, 38, 0.12);
+      }
+
+      .card--medo {
+        --accent: #f5f5f5;
+        --accent-soft: rgba(245, 245, 245, 0.12);
+      }
+
+      /* Ajuste especial para Medo (texto branco) */
+      .card--medo .card__title {
+        text-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+      }
+
+      .card--medo .pill {
+        background: rgba(24, 24, 27, 0.8);
+        color: #f5f5f5;
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .card--medo .attr dd {
+        text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        background: #0f0f12;
+        color: var(--ink);
+        font-family: "Georgia", "Times New Roman", serif;
+      }
+
+      .page {
+        min-height: 100vh;
+        padding: 24px;
+      }
+
+      .header {
+        text-align: center;
+        color: #f3efe7;
+        margin-bottom: 32px;
+      }
+
+      .header h1 {
+        margin: 0 0 8px 0;
+        font-size: 32px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+
+      .header p {
+        margin: 0;
+        font-size: 16px;
+        opacity: 0.7;
+      }
+
+      .loading {
+        text-align: center;
+        color: #f3efe7;
+        font-size: 18px;
+        padding: 40px;
+      }
+
+      .error {
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.1);
+        border: 2px solid #ef4444;
+        border-radius: 8px;
+        padding: 16px;
+        text-align: center;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      /* Grid de cards */
+      .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+        gap: 0.5rem;
+        max-width: 100%;
+      }
+
+      /* Estilos do card */
+      .card {
+        width: 100%;
+        max-width: var(--card-w);
+        height: var(--card-h);
+        background: var(--paper);
+        border-radius: var(--radius);
+        border: 4px solid var(--border-outer);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+        display: grid;
+        grid-template-rows: auto auto auto auto 1fr auto auto;
+        padding: 18px 18px 14px 18px;
+        justify-self: center;
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        border-radius: var(--radius-inner);
+        border: 2px solid var(--border-inner);
+        pointer-events: none;
+      }
+
+      .card__header {
+        position: relative;
+        z-index: 1;
+        padding: 4px 6px 0 6px;
+      }
+
+      .card__title {
+        margin: 0;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-size: 20px;
+        line-height: 0.95;
+        font-weight: 800;
+      }
+
+      .card__meta {
+        margin-top: 10px;
+      }
+
+      .pill {
+        display: inline-block;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          sans-serif;
+        font-size: var(--fs-12);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        color: var(--accent);
+        background: var(--accent-soft);
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-weight: 600;
+      }
+
+      .rule {
+        height: 2px;
+        background: rgba(0, 0, 0, 0.18);
+        margin: 12px 6px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .topRow {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 1fr var(--art);
+        gap: var(--gap);
+        padding: 0 6px;
+        align-items: start;
+      }
+
+      .attrs {
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 6px;
+      }
+
+      .attr {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+        padding-bottom: 4px;
+      }
+
+      .attr dt {
+        margin: 0;
+        font-weight: 700;
+        font-size: var(--fs-16);
+        color: var(--ink);
+      }
+
+      .attr dd {
+        margin: 0;
+        font-size: var(--fs-16);
+        color: var(--accent);
+        min-width: 0;
+        overflow-wrap: anywhere;
+        line-height: 1.1;
+      }
+
+      .art {
+        width: var(--art);
+      }
+      .art__inner {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background-color: #b6b2ab88;
+      }
+
+      .art__hint {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          sans-serif;
+        font-size: var(--fs-12);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        color: rgba(0, 0, 0, 0.55);
+        font-weight: 600;
+      }
+
+      .art__img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .desc {
+        position: relative;
+        z-index: 1;
+        padding: 0 6px;
+        min-height: 0;
+      }
+
+      .desc p {
+        margin: 0;
+        line-height: 1.25;
+      }
+
+      .footer {
+        position: relative;
+        z-index: 1;
+        padding: 0 6px 2px 6px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .upgrade h2 {
+        margin: 0 0 2px 0;
+        font-size: var(--fs-14);
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        font-weight: 800;
+      }
+
+      .upgrade .pe {
+        font-weight: 700;
+        color: rgba(0, 0, 0, 0.65);
+        font-size: var(--fs-14);
+        margin-left: 6px;
+      }
+
+      .upgrade p {
+        margin: 0;
+        line-height: 1.25;
+        color: rgba(0, 0, 0, 0.72);
+        font-weight: 500;
+      }
+
+      /* Responsivo */
+      @media (max-width: 460px) {
+        .cards-grid {
+          grid-template-columns: 1fr;
+        }
+        :root {
+          --card-w: 100%;
+          --card-h: 140vw;
+          --art: 110px;
+        }
+        .card__title {
+          font-size: 30px;
+        }
+        .attr dt,
+        .attr dd {
+          font-size: var(--fs-14);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="page">
+      <div class="header">
+        <h1>🎴 Todas as Cartas de Rituais</h1>
+        <p id="card-count">Carregando...</p>
+      </div>
+
+      <div id="loading" class="loading">Carregando rituais...</div>
+      <div id="error" class="error" style="display: none"></div>
+
+      <div id="cards-container" class="cards-grid"></div>
+    </main>
+
+    <script>
+      const API_URL = "http://localhost:3000/rituais";
+
+      // Função para normalizar texto de execução
+      function formatarExecucao(execucao) {
+        const map = {
+          "acao-padrao": "Ação-padrão",
+          "acao-completa": "Ação-completa",
+          reacao: "Reação",
+        };
+        return map[execucao] || execucao;
+      }
+
+      // Função para capitalizar primeira letra
+      function capitalize(text) {
+        if (!text) return text;
+        return text.charAt(0).toUpperCase() + text.slice(1);
+      }
+
+      // Função para extrair custo de PE de texto
+      function extrairCustoPE(texto) {
+        if (!texto || texto === "-") return null;
+        const match = texto.match(/\(\+(\d+)\s*PE\)/i);
+        return match ? match[1] : null;
+      }
+
+      // Função para limpar texto do upgrade (remover custo PE)
+      function limparTextoUpgrade(texto) {
+        if (!texto || texto === "-") return null;
+        return texto.replace(/\(\+\d+\s*PE\):\s*/i, "").trim();
+      }
+
+      // Função para ajustar tamanho da fonte da descrição
+      function ajustarFonteDescricao(elemento, descricao) {
+        if (!elemento || !descricao) return;
+
+        const comprimento = descricao.length;
+        let fontSize;
+
+        if (comprimento <= 150) fontSize = 14;
+        else if (comprimento <= 250) fontSize = 13;
+        else if (comprimento <= 350) fontSize = 12;
+        else if (comprimento <= 450) fontSize = 11;
+        else fontSize = 10;
+
+        elemento.style.fontSize = `${fontSize}px`;
+      }
+
+      // Função para ajustar tamanho da fonte dos upgrades
+      function ajustarFonteUpgrade(elemento, texto) {
+        if (!elemento || !texto) return;
+
+        const pElement = elemento.querySelector("p");
+        if (!pElement) return;
+
+        const comprimento = texto.length;
+        let fontSize;
+
+        if (comprimento <= 80) fontSize = 14;
+        else if (comprimento <= 150) fontSize = 13;
+        else if (comprimento <= 220) fontSize = 12;
+        else if (comprimento <= 300) fontSize = 11;
+        else fontSize = 10;
+
+        pElement.style.fontSize = `${fontSize}px`;
+      }
+
+      // Criar um card
+      function criarCard(ritual) {
+        const card = document.createElement("article");
+        card.className = `card card--${ritual.elemento}`;
+
+        // Header
+        const header = document.createElement("header");
+        header.className = "card__header";
+        header.innerHTML = `
+          <h1 class="card__title">${ritual.nome.toUpperCase()}</h1>
+          <div class="card__meta">
+            <span class="pill">${capitalize(
+              ritual.elemento
+            ).toUpperCase()} • CÍRCULO ${ritual.circulo}</span>
+          </div>
+        `;
+        card.appendChild(header);
+
+        // Rule 1
+        card.appendChild(document.createElement("div")).className = "rule";
+
+        // Top Row (Atributos + Imagem)
+        const topRow = document.createElement("section");
+        topRow.className = "topRow";
+        topRow.innerHTML = `
+          <dl class="attrs">
+            <div class="attr">
+              <dt>Execução:</dt>
+              <dd>${formatarExecucao(ritual.execucao)}</dd>
+            </div>
+            <div class="attr">
+              <dt>Alcance:</dt>
+              <dd>${capitalize(ritual.alcance)}</dd>
+            </div>
+            <div class="attr">
+              <dt>Alvo:</dt>
+              <dd>${ritual.alvo}</dd>
+            </div>
+            <div class="attr">
+              <dt>Duração:</dt>
+              <dd>${
+                ritual.duracao === "-" ? "—" : capitalize(ritual.duracao)
+              }</dd>
+            </div>
+            <div class="attr">
+              <dt>Resistência:</dt>
+              <dd>${ritual.resistencia === "-" ? "—" : ritual.resistencia}</dd>
+            </div>
+          </dl>
+          <div class="art">
+            <div class="art__inner">
+              <img
+                class="art__img"
+                src="assets/${ritual.id}.webp"
+                alt="${ritual.nome}"
+                onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\\'art__hint\\'>Sem imagem</span>'"
+              />
+            </div>
+          </div>
+        `;
+        card.appendChild(topRow);
+
+        // Rule 2
+        card.appendChild(document.createElement("div")).className = "rule";
+
+        // Descrição
+        const desc = document.createElement("section");
+        desc.className = "desc";
+        const descP = document.createElement("p");
+        descP.textContent = ritual.descricao;
+        desc.appendChild(descP);
+        card.appendChild(desc);
+        ajustarFonteDescricao(descP, ritual.descricao);
+
+        // Rule 3
+        card.appendChild(document.createElement("div")).className = "rule";
+
+        // Footer (Upgrades)
+        const footer = document.createElement("footer");
+        footer.className = "footer";
+
+        // Discente
+        if (ritual.discente && ritual.discente !== "-") {
+          const custoPE = extrairCustoPE(ritual.discente);
+          const textoLimpo = limparTextoUpgrade(ritual.discente);
+
+          if (textoLimpo) {
+            const discenteEl = document.createElement("section");
+            discenteEl.className = "upgrade";
+            discenteEl.innerHTML = `
+              <h2>DISCENTE${
+                custoPE ? ` <span class="pe">(+${custoPE} PE)</span>` : ""
+              }</h2>
+              <p>${textoLimpo}</p>
+            `;
+            footer.appendChild(discenteEl);
+            ajustarFonteUpgrade(discenteEl, textoLimpo);
+          }
+        }
+
+        // Verdadeira
+        if (ritual.verdadeira && ritual.verdadeira !== "-") {
+          const custoPE = extrairCustoPE(ritual.verdadeira);
+          const textoLimpo = limparTextoUpgrade(ritual.verdadeira);
+
+          if (textoLimpo) {
+            const verdadeiraEl = document.createElement("section");
+            verdadeiraEl.className = "upgrade";
+            verdadeiraEl.innerHTML = `
+              <h2>VERDADEIRA${
+                custoPE ? ` <span class="pe">(+${custoPE} PE)</span>` : ""
+              }</h2>
+              <p>${textoLimpo}</p>
+            `;
+            footer.appendChild(verdadeiraEl);
+            ajustarFonteUpgrade(verdadeiraEl, textoLimpo);
+          }
+        }
+
+        card.appendChild(footer);
+        return card;
+      }
+
+      // Carregar e renderizar todos os cards
+      async function carregarTodos() {
+        const loadingEl = document.getElementById("loading");
+        const errorEl = document.getElementById("error");
+        const container = document.getElementById("cards-container");
+        const countEl = document.getElementById("card-count");
+
+        try {
+          const response = await fetch(API_URL);
+          if (!response.ok) {
+            throw new Error(
+              "Erro ao carregar rituais. Certifique-se de que o json-server está rodando."
+            );
+          }
+
+          const rituais = await response.json();
+
+          // Ocultar loading
+          loadingEl.style.display = "none";
+
+          // Atualizar contador
+          countEl.textContent = `${rituais.length} rituais encontrados`;
+
+          // Criar e adicionar todos os cards
+          rituais.forEach((ritual) => {
+            const card = criarCard(ritual);
+            container.appendChild(card);
+          });
+        } catch (error) {
+          console.error("Erro:", error);
+          loadingEl.style.display = "none";
+          errorEl.textContent = error.message;
+          errorEl.style.display = "block";
+        }
+      }
+
+      // Inicializar
+      document.addEventListener("DOMContentLoaded", carregarTodos);
+    </script>
+  </body>
+</html>
+

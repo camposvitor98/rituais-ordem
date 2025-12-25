@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paleta de Cores - Elementos</title>
+  <style>
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: #0f0f12;
+      color: #f3efe7;
+      padding: 40px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .color-grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .color-card {
+      background: #f3efe7;
+      border-radius: 16px;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 20px;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .color-sample {
+      width: 120px;
+      height: 120px;
+      border-radius: 12px;
+      border: 3px solid #3b3b3b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .color-info {
+      color: #1b1b1b;
+    }
+
+    .color-info h2 {
+      margin: 0 0 8px 0;
+      font-size: 24px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .color-info p {
+      margin: 4px 0;
+      font-size: 14px;
+    }
+
+    .code {
+      background: #2a2a2f;
+      color: #f3efe7;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+    }
+
+    /* Cores específicas */
+    .conhecimento .color-sample {
+      background: #eab308;
+      color: #1b1b1b;
+    }
+    .conhecimento h2 {
+      color: #eab308;
+    }
+
+    .energia .color-sample {
+      background: #7c3aed;
+      color: #f5f5f5;
+    }
+    .energia h2 {
+      color: #7c3aed;
+    }
+
+    .morte .color-sample {
+      background: #18181b;
+      color: #f5f5f5;
+    }
+    .morte h2 {
+      color: #18181b;
+    }
+
+    .sangue .color-sample {
+      background: #dc2626;
+      color: #f5f5f5;
+    }
+    .sangue h2 {
+      color: #dc2626;
+    }
+
+    .medo .color-sample {
+      background: #f5f5f5;
+      color: #1b1b1b;
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+    }
+    .medo h2 {
+      color: #1b1b1b;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎨 Paleta de Cores dos Elementos</h1>
+  
+  <div class="color-grid">
+    <div class="color-card conhecimento">
+      <div class="color-sample">Conhecimento</div>
+      <div class="color-info">
+        <h2>Conhecimento</h2>
+        <p><strong>Cor:</strong> Amarelo</p>
+        <p><strong>Hex:</strong> <span class="code">#eab308</span></p>
+        <p><strong>RGB:</strong> <span class="code">rgb(234, 179, 8)</span></p>
+        <p><strong>Uso:</strong> Rituais de conhecimento, memória e percepção</p>
+      </div>
+    </div>
+
+    <div class="color-card energia">
+      <div class="color-sample">Energia</div>
+      <div class="color-info">
+        <h2>Energia</h2>
+        <p><strong>Cor:</strong> Roxo</p>
+        <p><strong>Hex:</strong> <span class="code">#7c3aed</span></p>
+        <p><strong>RGB:</strong> <span class="code">rgb(124, 58, 237)</span></p>
+        <p><strong>Uso:</strong> Rituais de energia, caos e tecnologia</p>
+      </div>
+    </div>
+
+    <div class="color-card morte">
+      <div class="color-sample">Morte</div>
+      <div class="color-info">
+        <h2>Morte</h2>
+        <p><strong>Cor:</strong> Preto</p>
+        <p><strong>Hex:</strong> <span class="code">#18181b</span></p>
+        <p><strong>RGB:</strong> <span class="code">rgb(24, 24, 27)</span></p>
+        <p><strong>Uso:</strong> Rituais de morte, tempo e decadência</p>
+      </div>
+    </div>
+
+    <div class="color-card sangue">
+      <div class="color-sample">Sangue</div>
+      <div class="color-info">
+        <h2>Sangue</h2>
+        <p><strong>Cor:</strong> Vermelho</p>
+        <p><strong>Hex:</strong> <span class="code">#dc2626</span></p>
+        <p><strong>RGB:</strong> <span class="code">rgb(220, 38, 38)</span></p>
+        <p><strong>Uso:</strong> Rituais de sangue, carne e corpo</p>
+      </div>
+    </div>
+
+    <div class="color-card medo">
+      <div class="color-sample">Medo</div>
+      <div class="color-info">
+        <h2>Medo</h2>
+        <p><strong>Cor:</strong> Branco</p>
+        <p><strong>Hex:</strong> <span class="code">#f5f5f5</span></p>
+        <p><strong>RGB:</strong> <span class="code">rgb(245, 245, 245)</span></p>
+        <p><strong>Uso:</strong> Rituais de medo e terror</p>
+        <p><strong>Nota:</strong> Usa sombra para contraste em fundos claros</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

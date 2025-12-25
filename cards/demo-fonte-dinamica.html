@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demonstração - Fonte Dinâmica</title>
+  <style>
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: #0f0f12;
+      color: #f3efe7;
+      padding: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .demo-grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .demo-card {
+      background: #f3efe7;
+      border-radius: 16px;
+      padding: 20px;
+      color: #1b1b1b;
+    }
+
+    .demo-card h2 {
+      margin: 0 0 12px 0;
+      font-size: 16px;
+      color: #dc2626;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .demo-card .info {
+      background: #2a2a2f;
+      color: #f3efe7;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: monospace;
+    }
+
+    .demo-text {
+      line-height: 1.25;
+      border: 2px dashed #bdb7ad;
+      padding: 12px;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .legend {
+      background: #1a1a1f;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .legend h3 {
+      margin: 0 0 12px 0;
+      font-size: 18px;
+    }
+
+    .legend ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .legend li {
+      margin: 8px 0;
+      font-size: 14px;
+    }
+
+    .legend code {
+      background: #2a2a2f;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <h1>📏 Demonstração - Fonte Dinâmica</h1>
+
+  <div class="legend">
+    <h3>🎯 Regras de Ajuste Automático</h3>
+    <h4 style="margin: 16px 0 8px 0; font-size: 16px;">📄 Descrição Principal</h4>
+    <ul>
+      <li><code>≤ 150 caracteres</code> → <strong>14px</strong> (texto curto)</li>
+      <li><code>≤ 250 caracteres</code> → <strong>13px</strong> (texto médio)</li>
+      <li><code>≤ 350 caracteres</code> → <strong>12px</strong> (texto longo)</li>
+      <li><code>≤ 450 caracteres</code> → <strong>11px</strong> (texto muito longo)</li>
+      <li><code>&gt; 450 caracteres</code> → <strong>10px</strong> (texto extremamente longo)</li>
+    </ul>
+    <h4 style="margin: 16px 0 8px 0; font-size: 16px;">⬆️ Upgrades (Discente/Verdadeira)</h4>
+    <ul>
+      <li><code>≤ 80 caracteres</code> → <strong>14px</strong> (texto curto)</li>
+      <li><code>≤ 150 caracteres</code> → <strong>13px</strong> (texto médio)</li>
+      <li><code>≤ 220 caracteres</code> → <strong>12px</strong> (texto longo)</li>
+      <li><code>≤ 300 caracteres</code> → <strong>11px</strong> (texto muito longo)</li>
+      <li><code>&gt; 300 caracteres</code> → <strong>10px</strong> (texto extremamente longo)</li>
+    </ul>
+  </div>
+
+  <div class="demo-grid">
+    <div class="demo-card">
+      <h2>
+        Texto Curto
+        <span class="info">140 chars • 14px</span>
+      </h2>
+      <div class="demo-text" style="font-size: 14px;">
+        Este ritual modifica a biologia do alvo para permitir a sobrevivência em ambientes hostis. O alvo fica imune a calor e frio extremos.
+      </div>
+    </div>
+
+    <div class="demo-card">
+      <h2>
+        Texto Médio
+        <span class="info">230 chars • 13px</span>
+      </h2>
+      <div class="demo-text" style="font-size: 13px;">
+        Você vislumbra seu futuro próximo, analisando milhões de possibilidades e escolhendo a melhor. Você recebe +15 em um teste de resistência ou na Defesa contra um ataque. Este ritual permite que você altere o destino.
+      </div>
+    </div>
+
+    <div class="demo-card">
+      <h2>
+        Texto Longo
+        <span class="info">340 chars • 12px</span>
+      </h2>
+      <div class="demo-text" style="font-size: 12px;">
+        Você invade a mente do alvo e altera ou apaga suas memórias de até uma hora atrás. Se escolher alterar as memórias, você pode mudar detalhes de eventos recentes, como a identidade de alguém encontrado ou o endereço de um lugar visitado, mas não reescrever completamente esses eventos. O alvo recupera suas memórias após 1d4 dias.
+      </div>
+    </div>
+
+    <div class="demo-card">
+      <h2>
+        Texto Muito Longo
+        <span class="info">430 chars • 11px</span>
+      </h2>
+      <div class="demo-text" style="font-size: 11px;">
+        Você manipula o calor e o fogo. Ao conjurar o ritual, escolha um dos seguintes efeitos. Chamejar: o alvo é uma arma corpo a corpo. Ela causa +1d6 pontos de dano de fogo. Esquentar: o alvo é um objeto, que começa a esquentar. Ele sofre 1d6 pontos de dano de fogo por rodada e causa o mesmo dano a qualquer ser que o esteja empunhando ou vestindo. A critério do mestre, o objeto ou o ser pode pegar fogo.
+      </div>
+    </div>
+
+    <div class="demo-card">
+      <h2>
+        Texto Extremamente Longo
+        <span class="info">520+ chars • 10px</span>
+      </h2>
+      <div class="demo-text" style="font-size: 10px;">
+        Usando os medos subconscientes do alvo, você manipula a espiral da Morte para criar uma imagem daquilo que ele mais teme. Apenas a própria vítima vê o algoz com nitidez; outros seres presentes (incluindo você) enxergam apenas um vulto sombrio. O algoz surge adjacente a você. No fim de cada turno seu, ele flutua 12m em direção à vítima. Se o algoz terminar o turno em alcance curto da vítima, ela deve fazer um teste de Vontade; se falhar, ficará abalada. Se o algoz terminar o turno adjacente à vítima, ela deve fazer um teste de Fortitude.
+      </div>
+    </div>
+  </div>
+
+  <h2 style="margin: 40px 0 20px 0; text-align: center;">⬆️ Upgrades (Discente/Verdadeira)</h2>
+
+  <div class="demo-grid">
+    <div class="demo-card">
+      <h2>
+        Upgrade Curto
+        <span class="info">50 chars • 14px</span>
+      </h2>
+      <div class="demo-text" style="font-size: 14px; background: rgba(0,0,0,0.05);">
+        Muda a duração para 1 dia.
+      </div>
+    </div>
+
+    <div class="demo-card">
+      <h2>
+        Upgrade Médio
+        <span class="info">120 chars • 13px</span>
+      </h2>
+      <div class="demo-text" style="font-size: 13px; background: rgba(0,0,0,0.05);">
+        Muda o alcance para "curto" e o alvo para "pessoas ou animais escolhidos". Requer 3º círculo e afinidade.
+      </div>
+    </div>
+
+    <div class="demo-card">
+      <h2>
+        Upgrade Longo
+        <span class="info">200 chars • 12px</span>
+      </h2>
+      <div class="demo-text" style="font-size: 12px; background: rgba(0,0,0,0.05);">
+        Muda o efeito para "fornece +15 na Defesa e resistência a balístico, corte, impacto e perfuração 10". Também aumenta os PV temporários para 10d6. Requer 4º círculo e afinidade com o elemento.
+      </div>
+    </div>
+
+    <div class="demo-card">
+      <h2>
+        Upgrade Muito Longo
+        <span class="info">280 chars • 11px</span>
+      </h2>
+      <div class="demo-text" style="font-size: 11px; background: rgba(0,0,0,0.05);">
+        Como discente, mas muda o dano para 8d6 e adiciona efeito de queimadura persistente. O alvo sofre 2d6 pontos de dano adicional no início de cada turno por 3 rodadas. Um teste de Reflexos pode reduzir o dano pela metade. Requer 3º círculo e afinidade com Energia.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

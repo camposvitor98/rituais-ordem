@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Carta — Corpo Adaptado</title>
+    <link rel="stylesheet" href="./card.css" />
+  </head>
+
+  <body>
+    <main class="page">
+      <article class="card card--sangue">
+        <header class="card__header">
+          <h1 class="card__title">CORPO ADAPTADO</h1>
+          <div class="card__meta">
+            <span class="pill">SANGUE • CÍRCULO 1</span>
+          </div>
+        </header>
+
+        <div class="rule"></div>
+
+        <section class="topRow">
+          <dl class="attrs" aria-label="Atributos do ritual">
+            <div class="attr">
+              <dt>Execução:</dt>
+              <dd>Ação-padrão</dd>
+            </div>
+            <div class="attr">
+              <dt>Alcance:</dt>
+              <dd>Toque</dd>
+            </div>
+            <div class="attr">
+              <dt>Alvo:</dt>
+              <dd>1 pessoa ou animal</dd>
+            </div>
+            <div class="attr">
+              <dt>Duração:</dt>
+              <dd>—</dd>
+            </div>
+            <div class="attr">
+              <dt>Resistência:</dt>
+              <dd>—</dd>
+            </div>
+          </dl>
+
+          <div class="art" aria-label="Espaço para ilustração 1:1">
+            <div class="art__inner">
+              <img
+                class="art__img"
+                src="assets/corpo-adaptado.webp"
+                alt="Ilustração do ritual"
+              />
+            </div>
+          </div>
+        </section>
+
+        <div class="rule"></div>
+
+        <section class="desc">
+          <p>
+            Este ritual modifica a biologia do alvo para permitir a
+            sobrevivência em ambientes hostis. O alvo fica imune a calor e frio
+            extremos, pode respirar na água se respirar ar (ou vice-versa) e não
+            sufoca em fumaça densa.
+          </p>
+        </section>
+
+        <div class="rule"></div>
+
+        <footer class="footer">
+          <section class="upgrade">
+            <h2>DISCENTE <span class="pe">(+2 PE)</span></h2>
+            <p>Muda a duração para 1 dia.</p>
+          </section>
+
+          <section class="upgrade">
+            <h2>VERDADEIRA <span class="pe">(+5 PE)</span></h2>
+            <p>
+              Muda o alcance para “curto” e o alvo para “pessoas ou animais
+              escolhidos”.
+            </p>
+          </section>
+        </footer>
+      </article>
+    </main>
+  </body>
+
+  <style>
+    /* card.css */
+    :root {
+      --card-w: 420px;
+      --card-h: 640px;
+
+      --paper: #f3efe7;
+      --ink: #1b1b1b;
+
+      --border-outer: #3b3b3b;
+      --border-inner: #bdb7ad;
+
+      /* Sangue */
+      --accent: #8b1e1e;
+      --accent-soft: rgba(139, 30, 30, 0.12);
+
+      --radius: 24px;
+      --radius-inner: 16px;
+
+      /* Tipografia (12–18) */
+      --fs-12: 10px;
+      --fs-14: 12px;
+      --fs-16: 14px;
+      --fs-18: 16px;
+
+      --gap: 8px;
+
+      /* Arte */
+      --art: 128px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+    html,
+    body {
+      height: 100%;
+    }
+    body {
+      margin: 0;
+      background: #0f0f12;
+      color: var(--ink);
+      font-family: "Georgia", "Times New Roman", serif;
+    }
+
+    .page {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: var(--card-w);
+      height: var(--card-h);
+      background: var(--paper);
+      border-radius: var(--radius);
+      border: 4px solid var(--border-outer);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+
+      /* IMPORTANTE: grid geral evita sobreposição */
+      display: grid;
+      grid-template-rows: auto auto auto auto 1fr auto auto;
+      padding: 18px 18px 14px 18px;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border-radius: var(--radius-inner);
+      border: 2px solid var(--border-inner);
+      pointer-events: none;
+    }
+
+    .card__header {
+      position: relative;
+      z-index: 1;
+      padding: 4px 6px 0 6px;
+    }
+
+    .card__title {
+      margin: 0;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+
+      /* título mais controlado (ainda pode ser maior que 18px) */
+      font-size: 20px;
+      line-height: 0.95;
+      font-weight: 800;
+    }
+
+    .card__meta {
+      margin-top: 10px;
+    }
+
+    .pill {
+      display: inline-block;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: var(--fs-12);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .rule {
+      height: 2px;
+      background: rgba(0, 0, 0, 0.18);
+      margin: 12px 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Atributos + arte */
+    .topRow {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr var(--art);
+      gap: var(--gap);
+      padding: 0 6px;
+      align-items: start;
+    }
+
+    .attrs {
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 6px;
+    }
+
+    .attr {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+      padding-bottom: 4px;
+    }
+
+    .attr dt {
+      margin: 0;
+      font-weight: 700;
+      font-size: var(--fs-16);
+      color: var(--ink);
+    }
+
+    .attr dd {
+      margin: 0;
+      font-size: var(--fs-16);
+      color: var(--accent);
+
+      /* evita “coluna explodir” */
+      min-width: 0;
+      overflow-wrap: anywhere;
+      line-height: 1.1;
+    }
+
+    .art {
+      width: var(--art);
+    }
+    .art__inner {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background-color: #b6b2ab88;
+    }
+
+    .art__hint {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: var(--fs-12);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: rgba(0, 0, 0, 0.55);
+      font-weight: 600;
+    }
+
+    .art__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Descrição cresce e ocupa o “miolo” */
+    .desc {
+      position: relative;
+      z-index: 1;
+      padding: 0 6px;
+      min-height: 0; /* essencial no grid */
+    }
+
+    .desc p {
+      margin: 0;
+      font-size: var(--fs-16);
+      line-height: 1.25;
+    }
+
+    /* Rodapé (sem absoluto) */
+    .footer {
+      position: relative;
+      z-index: 1;
+      padding: 0 6px 2px 6px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .upgrade h2 {
+      margin: 0 0 2px 0;
+      font-size: var(--fs-14);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      font-weight: 800;
+    }
+
+    .upgrade .pe {
+      font-weight: 700;
+      color: rgba(0, 0, 0, 0.65);
+      font-size: var(--fs-14);
+      margin-left: 6px;
+    }
+
+    .upgrade p {
+      margin: 0;
+      font-size: var(--fs-14);
+      line-height: 1.25;
+      color: rgba(0, 0, 0, 0.72);
+      font-weight: 500;
+    }
+
+    /* Responsivo */
+    @media (max-width: 460px) {
+      :root {
+        --card-w: 92vw;
+        --card-h: 140vw;
+        --art: 110px;
+      }
+      .card__title {
+        font-size: 30px;
+      }
+      .attr dt,
+      .attr dd {
+        font-size: var(--fs-14);
+      }
+      .desc p {
+        font-size: var(--fs-16);
+      }
+    }
+  </style>
+</html>

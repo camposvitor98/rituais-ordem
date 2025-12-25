@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Extrair Rituais</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background-color: #f5f5f5;
+        padding: 20px;
+        line-height: 1.6;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+        font-size: 28px;
+      }
+
+      form {
+        max-width: 700px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      form > div {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      input[type="text"],
+      select,
+      textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 15px;
+        font-family: inherit;
+        transition: border-color 0.3s ease;
+      }
+
+      input[type="text"]:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #4a90e2;
+      }
+
+      select {
+        cursor: pointer;
+        background-color: white;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 150px;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        padding: 14px;
+        background-color: #4a90e2;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 10px;
+      }
+
+      button[type="submit"]:hover {
+        background-color: #357abd;
+      }
+
+      button[type="submit"]:active {
+        transform: translateY(1px);
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 10px;
+        }
+
+        form {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 24px;
+        }
+      }
+
+      /* Estilos do Card de Preview */
+      #previewCard {
+        max-width: 700px;
+        margin: 30px auto;
+        background: white;
+        border: 3px solid #333;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        display: none;
+      }
+
+      #previewCard.show {
+        display: block;
+      }
+
+      .ritual-header {
+        text-align: center;
+        border-bottom: 2px solid #333;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+      }
+
+      .ritual-title {
+        font-size: 24px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+
+      .ritual-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 15px;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 5px 15px;
+        border: 2px solid #333;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+      }
+
+      .ritual-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .info-item {
+        border-bottom: 1px solid #333;
+        padding-bottom: 5px;
+      }
+
+      .info-label {
+        font-weight: bold;
+        font-size: 11px;
+        text-transform: uppercase;
+        color: #666;
+      }
+
+      .info-value {
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 2px;
+      }
+
+      .ritual-description {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px solid #333;
+      }
+
+      .description-section {
+        margin-bottom: 20px;
+      }
+
+      .description-title {
+        font-weight: bold;
+        font-size: 13px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        color: #333;
+      }
+
+      .description-text {
+        font-size: 14px;
+        line-height: 1.6;
+        text-align: justify;
+      }
+
+      .close-preview {
+        width: 100%;
+        padding: 10px;
+        background-color: #666;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+
+      .close-preview:hover {
+        background-color: #444;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Formulário de Ritual</h1>
+
+    <!-- Seção de Carregar Ritual Existente -->
+    <div
+      style="
+        max-width: 700px;
+        margin: 0 auto 20px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      "
+    >
+      <label
+        for="carregarRitual"
+        style="
+          display: block;
+          margin-bottom: 8px;
+          color: #333;
+          font-weight: 500;
+          font-size: 14px;
+        "
+      >
+        Carregar Ritual Existente:
+      </label>
+      <select
+        id="carregarRitual"
+        style="
+          width: 100%;
+          padding: 12px;
+          border: 2px solid #e0e0e0;
+          border-radius: 6px;
+          font-size: 15px;
+          cursor: pointer;
+          background-color: white;
+        "
+      >
+        <option value="">Selecione um ritual...</option>
+      </select>
+    </div>
+
+    <form id="ritualForm">
+      <div>
+        <label for="nome">Nome do Ritual:</label>
+        <input type="text" id="nome" name="nome" required />
+      </div>
+
+      <div>
+        <label for="elemento">Elemento:</label>
+        <select id="elemento" name="elemento" required>
+          <option value="">Selecione...</option>
+          <option value="conhecimento">Conhecimento</option>
+          <option value="energia">Energia</option>
+          <option value="morte">Morte</option>
+          <option value="sangue">Sangue</option>
+          <option value="medo">Medo</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="circulo">Círculo:</label>
+        <select id="circulo" name="circulo" required>
+          <option value="">Selecione...</option>
+          <option value="1">1º</option>
+          <option value="2">2º</option>
+          <option value="3">3º</option>
+          <option value="4">4º</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="execucao">Execução:</label>
+        <select id="execucao" name="execucao" required>
+          <option value="">Selecione...</option>
+          <option value="acao-livre">Ação Livre</option>
+          <option value="reacao">Reação</option>
+          <option value="acao-padrao">Ação Padrão</option>
+          <option value="acao-completa">Ação Completa</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="alcance">Alcance:</label>
+        <select id="alcance" name="alcance" required>
+          <option value="">Selecione...</option>
+          <option value="pessoal">Pessoal</option>
+          <option value="toque">Toque</option>
+          <option value="curto">Curto (9m/6q)</option>
+          <option value="medio">Médio (18m/12q)</option>
+          <option value="longo">Longo (36m/24q)</option>
+          <option value="extremo">Extremo (90m/60q)</option>
+          <option value="ilimitado">Ilimitado</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="alvo">Alvo:</label>
+        <input type="text" id="alvo" name="alvo" />
+      </div>
+
+      <div>
+        <label for="duracao">Duração:</label>
+        <input type="text" id="duracao" name="duracao" />
+      </div>
+
+      <div>
+        <label for="resistencia">Resistência:</label>
+        <input type="text" id="resistencia" name="resistencia" />
+      </div>
+
+      <div>
+        <label for="descricao">Descrição:</label>
+        <textarea
+          id="descricao"
+          name="descricao"
+          rows="10"
+          cols="50"
+        ></textarea>
+      </div>
+
+      <div>
+        <label for="discente">Discente:</label>
+        <textarea id="discente" name="discente" rows="6" cols="50"></textarea>
+      </div>
+
+      <div>
+        <label for="verdadeira">Verdadeira:</label>
+        <textarea
+          id="verdadeira"
+          name="verdadeira"
+          rows="6"
+          cols="50"
+        ></textarea>
+      </div>
+
+      <button type="submit">Extrair Dados</button>
+    </form>
+
+    <!-- Card de Preview -->
+    <div id="previewCard">
+      <div class="ritual-header">
+        <div class="ritual-title" id="previewNome">NOME DO RITUAL</div>
+        <div class="ritual-badges">
+          <span class="badge" id="previewElemento">ELEMENTO</span>
+          <span class="badge" id="previewCirculo">CÍRCULO</span>
+        </div>
+      </div>
+
+      <div class="ritual-info">
+        <div class="info-item">
+          <div class="info-label">Execução</div>
+          <div class="info-value" id="previewExecucao">-</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Alcance</div>
+          <div class="info-value" id="previewAlcance">-</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Alvo</div>
+          <div class="info-value" id="previewAlvo">-</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Duração</div>
+          <div class="info-value" id="previewDuracao">-</div>
+        </div>
+        <div class="info-item" style="grid-column: 1 / -1">
+          <div class="info-label">Resistência</div>
+          <div class="info-value" id="previewResistencia">-</div>
+        </div>
+      </div>
+
+      <div class="ritual-description">
+        <div class="description-section">
+          <div class="description-title">Descrição</div>
+          <div class="description-text" id="previewDescricao">-</div>
+        </div>
+
+        <div class="description-section">
+          <div class="description-title">Discente</div>
+          <div class="description-text" id="previewDiscente">-</div>
+        </div>
+
+        <div class="description-section">
+          <div class="description-title">Verdadeira</div>
+          <div class="description-text" id="previewVerdadeira">-</div>
+        </div>
+      </div>
+
+      <button
+        class="close-preview"
+        onclick="document.getElementById('previewCard').classList.remove('show')"
+      >
+        Fechar Preview
+      </button>
+    </div>
+
+    <script>
+      const form = document.getElementById("ritualForm");
+      const selectCarregar = document.getElementById("carregarRitual");
+
+      // Carregar lista de rituais do banco
+      async function carregarListaRituais() {
+        try {
+          const response = await fetch("http://localhost:3000/rituais");
+          if (response.ok) {
+            const rituais = await response.json();
+
+            // Limpar opções existentes (exceto a primeira)
+            selectCarregar.innerHTML =
+              '<option value="">Selecione um ritual...</option>';
+
+            // Adicionar cada ritual como opção
+            rituais.forEach((ritual) => {
+              const option = document.createElement("option");
+              option.value = ritual.id;
+              option.textContent = `${ritual.nome} (${ritual.elemento} - ${ritual.circulo}º círculo)`;
+              selectCarregar.appendChild(option);
+            });
+          }
+        } catch (error) {
+          console.error("Erro ao carregar rituais:", error);
+        }
+      }
+
+      // Preencher formulário com dados do ritual selecionado
+      async function preencherFormulario(ritualId) {
+        try {
+          const response = await fetch(
+            `http://localhost:3000/rituais/${ritualId}`
+          );
+          if (response.ok) {
+            const ritual = await response.json();
+
+            // Preencher todos os campos
+            document.getElementById("nome").value = ritual.nome || "";
+            document.getElementById("elemento").value = ritual.elemento || "";
+            document.getElementById("circulo").value = ritual.circulo || "";
+            document.getElementById("execucao").value = ritual.execucao || "";
+            document.getElementById("alcance").value = ritual.alcance || "";
+            document.getElementById("alvo").value = ritual.alvo || "";
+            document.getElementById("duracao").value = ritual.duracao || "";
+            document.getElementById("resistencia").value =
+              ritual.resistencia || "";
+            document.getElementById("descricao").value = ritual.descricao || "";
+            document.getElementById("discente").value = ritual.discente || "";
+            document.getElementById("verdadeira").value =
+              ritual.verdadeira || "";
+
+            // Mostrar preview automaticamente
+            const dados = {
+              nome: ritual.nome || "-",
+              elemento: ritual.elemento || "-",
+              circulo: ritual.circulo || "-",
+              execucao: ritual.execucao || "-",
+              alcance: ritual.alcance || "-",
+              alvo: ritual.alvo || "-",
+              duracao: ritual.duracao || "-",
+              resistencia: ritual.resistencia || "-",
+              descricao: ritual.descricao || "-",
+              discente: ritual.discente || "-",
+              verdadeira: ritual.verdadeira || "-",
+            };
+            mostrarPreview(dados);
+          }
+        } catch (error) {
+          console.error("Erro ao carregar ritual:", error);
+        }
+      }
+
+      // Event listener para o select de carregar ritual
+      selectCarregar.addEventListener("change", (e) => {
+        const ritualId = e.target.value;
+        if (ritualId) {
+          preencherFormulario(ritualId);
+        } else {
+          // Limpar formulário se desselecionar
+          form.reset();
+          document.getElementById("previewCard").classList.remove("show");
+        }
+      });
+
+      // Carregar lista ao iniciar a página
+      carregarListaRituais();
+
+      function mostrarPreview(dados) {
+        // Preencher o card de preview
+        document.getElementById("previewNome").textContent = dados.nome;
+        document.getElementById("previewElemento").textContent =
+          dados.elemento.toUpperCase();
+        document.getElementById("previewCirculo").textContent =
+          dados.circulo + "º CÍRCULO";
+        document.getElementById("previewExecucao").textContent = dados.execucao;
+        document.getElementById("previewAlcance").textContent = dados.alcance;
+        document.getElementById("previewAlvo").textContent = dados.alvo;
+        document.getElementById("previewDuracao").textContent = dados.duracao;
+        document.getElementById("previewResistencia").textContent =
+          dados.resistencia;
+        document.getElementById("previewDescricao").textContent =
+          dados.descricao;
+        document.getElementById("previewDiscente").textContent = dados.discente;
+        document.getElementById("previewVerdadeira").textContent =
+          dados.verdadeira;
+
+        // Mostrar o card
+        document.getElementById("previewCard").classList.add("show");
+
+        // Scroll suave até o preview
+        setTimeout(() => {
+          document.getElementById("previewCard").scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }, 100);
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const dados = {
+          nome: document.getElementById("nome").value.trim() || "-",
+          elemento: document.getElementById("elemento").value.trim() || "-",
+          circulo: document.getElementById("circulo").value.trim() || "-",
+          execucao: document.getElementById("execucao").value.trim() || "-",
+          alcance: document.getElementById("alcance").value.trim() || "-",
+          alvo: document.getElementById("alvo").value.trim() || "-",
+          duracao: document.getElementById("duracao").value.trim() || "-",
+          resistencia:
+            document.getElementById("resistencia").value.trim() || "-",
+          descricao: document.getElementById("descricao").value.trim() || "-",
+          discente: document.getElementById("discente").value.trim() || "-",
+          verdadeira: document.getElementById("verdadeira").value.trim() || "-",
+        };
+
+        // Mostrar preview antes de enviar
+        mostrarPreview(dados);
+
+        try {
+          const response = await fetch("http://localhost:3000/rituais", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(dados),
+          });
+
+          if (response.ok) {
+            const resultado = await response.json();
+            console.log("Ritual adicionado com sucesso:", resultado);
+            alert("Ritual adicionado com sucesso!");
+            form.reset();
+          } else {
+            console.error("Erro ao adicionar ritual:", response.status);
+            alert("Erro ao adicionar ritual. Verifique o console.");
+          }
+        } catch (error) {
+          console.error("Erro na requisição:", error);
+          alert(
+            "Erro ao conectar com o servidor. Certifique-se de que o json-server está rodando."
+          );
+        }
+      });
+    </script>
+  </body>
+</html>

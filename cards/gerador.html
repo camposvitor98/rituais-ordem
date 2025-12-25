@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Gerador de Cartas de Rituais</title>
+    <style>
+      /* Estilos gerais */
+      :root {
+        --card-w: 420px;
+        --card-h: 640px;
+
+        --paper: #f3efe7;
+        --ink: #1b1b1b;
+
+        --border-outer: #3b3b3b;
+        --border-inner: #bdb7ad;
+
+        --radius: 24px;
+        --radius-inner: 16px;
+
+        /* Tipografia (12–18) */
+        --fs-12: 10px;
+        --fs-14: 12px;
+        --fs-16: 14px;
+        --fs-18: 16px;
+
+        --gap: 8px;
+
+        /* Arte */
+        --art: 128px;
+      }
+
+      /* Cores dos elementos */
+      .card--conhecimento {
+        --accent: #eab308;
+        --accent-soft: rgba(234, 179, 8, 0.12);
+      }
+
+      .card--energia {
+        --accent: #7c3aed;
+        --accent-soft: rgba(124, 58, 237, 0.12);
+      }
+
+      .card--morte {
+        --accent: #18181b;
+        --accent-soft: rgba(24, 24, 27, 0.12);
+      }
+
+      .card--sangue {
+        --accent: #dc2626;
+        --accent-soft: rgba(220, 38, 38, 0.12);
+      }
+
+      .card--medo {
+        --accent: #f5f5f5;
+        --accent-soft: rgba(245, 245, 245, 0.12);
+      }
+
+      /* Ajuste especial para Medo (texto branco) */
+      .card--medo .card__title {
+        text-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+      }
+
+      .card--medo .pill {
+        background: rgba(24, 24, 27, 0.8);
+        color: #f5f5f5;
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .card--medo .attr dd {
+        text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        background: #0f0f12;
+        color: var(--ink);
+        font-family: "Georgia", "Times New Roman", serif;
+      }
+
+      .page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 24px;
+        gap: 24px;
+      }
+
+      /* Controles */
+      .controls {
+        width: 100%;
+        max-width: var(--card-w);
+        background: #1a1a1f;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      }
+
+      .controls h2 {
+        margin: 0 0 16px 0;
+        color: #f3efe7;
+        font-size: 18px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+      }
+
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .control-group label {
+        color: #bdb7ad;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .control-group select {
+        background: #2a2a2f;
+        color: #f3efe7;
+        border: 2px solid #3b3b3b;
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 14px;
+        font-family: inherit;
+        cursor: pointer;
+        transition: border-color 0.2s;
+      }
+
+      .control-group select:hover {
+        border-color: #5a5a5f;
+      }
+
+      .control-group select:focus {
+        outline: none;
+        border-color: #8b1e1e;
+      }
+
+      .loading {
+        color: #bdb7ad;
+        text-align: center;
+        padding: 20px;
+        font-style: italic;
+      }
+
+      .error {
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.1);
+        border: 2px solid #ef4444;
+        border-radius: 8px;
+        padding: 16px;
+        text-align: center;
+      }
+
+      /* Estilos do card */
+      .card {
+        width: var(--card-w);
+        height: var(--card-h);
+        background: var(--paper);
+        border-radius: var(--radius);
+        border: 4px solid var(--border-outer);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+        display: grid;
+        grid-template-rows: auto auto auto auto 1fr auto auto;
+        padding: 18px 18px 14px 18px;
+        opacity: 1;
+        transition: opacity 0.3s;
+      }
+
+      .card.hidden {
+        display: none;
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        border-radius: var(--radius-inner);
+        border: 2px solid var(--border-inner);
+        pointer-events: none;
+      }
+
+      .card__header {
+        position: relative;
+        z-index: 1;
+        padding: 4px 6px 0 6px;
+      }
+
+      .card__title {
+        margin: 0;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-size: 20px;
+        line-height: 0.95;
+        font-weight: 800;
+      }
+
+      .card__meta {
+        margin-top: 10px;
+      }
+
+      .pill {
+        display: inline-block;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          sans-serif;
+        font-size: var(--fs-12);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        color: var(--accent);
+        background: var(--accent-soft);
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-weight: 600;
+      }
+
+      .rule {
+        height: 2px;
+        background: rgba(0, 0, 0, 0.18);
+        margin: 12px 6px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .topRow {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 1fr var(--art);
+        gap: var(--gap);
+        padding: 0 6px;
+        align-items: start;
+      }
+
+      .attrs {
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 6px;
+      }
+
+      .attr {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+        padding-bottom: 4px;
+      }
+
+      .attr dt {
+        margin: 0;
+        font-weight: 700;
+        font-size: var(--fs-16);
+        color: var(--ink);
+      }
+
+      .attr dd {
+        margin: 0;
+        font-size: var(--fs-16);
+        color: var(--accent);
+        min-width: 0;
+        overflow-wrap: anywhere;
+        line-height: 1.1;
+      }
+
+      .art {
+        width: var(--art);
+      }
+
+      .art__inner {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background-color: #b6b2ab88;
+      }
+
+      .art__hint {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          sans-serif;
+        font-size: var(--fs-12);
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        color: rgba(0, 0, 0, 0.55);
+        font-weight: 600;
+      }
+
+      .art__img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .desc {
+        position: relative;
+        z-index: 1;
+        padding: 0 6px;
+        min-height: 0;
+      }
+
+      .desc p {
+        margin: 0;
+        line-height: 1.25;
+        /* font-size será ajustado dinamicamente via JavaScript (10px - 14px) */
+      }
+
+      .footer {
+        position: relative;
+        z-index: 1;
+        padding: 0 6px 2px 6px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .upgrade h2 {
+        margin: 0 0 2px 0;
+        font-size: var(--fs-14);
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        font-weight: 800;
+      }
+
+      .upgrade .pe {
+        font-weight: 700;
+        color: rgba(0, 0, 0, 0.65);
+        font-size: var(--fs-14);
+        margin-left: 6px;
+      }
+
+      .upgrade p {
+        margin: 0;
+        line-height: 1.25;
+        color: rgba(0, 0, 0, 0.72);
+        font-weight: 500;
+        /* font-size será ajustado dinamicamente via JavaScript (10px - 14px) */
+      }
+
+      /* Responsivo */
+      @media (max-width: 460px) {
+        :root {
+          --card-w: 92vw;
+          --card-h: 140vw;
+          --art: 110px;
+        }
+        .card__title {
+          font-size: 30px;
+        }
+        .attr dt,
+        .attr dd {
+          font-size: var(--fs-14);
+        }
+        .desc p {
+          font-size: var(--fs-16);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="page">
+      <div class="controls">
+        <h2>Gerador de Cartas de Rituais</h2>
+        <div class="control-group">
+          <label for="ritual-select">Selecione um Ritual:</label>
+          <select id="ritual-select">
+            <option value="">Carregando rituais...</option>
+          </select>
+        </div>
+        <div id="loading" class="loading" style="display: none">
+          Carregando...
+        </div>
+        <div id="error" class="error" style="display: none"></div>
+      </div>
+
+      <article id="card" class="card hidden">
+        <header class="card__header">
+          <h1 class="card__title" id="card-title"></h1>
+          <div class="card__meta">
+            <span class="pill" id="card-meta"></span>
+          </div>
+        </header>
+
+        <div class="rule"></div>
+
+        <section class="topRow">
+          <dl class="attrs" aria-label="Atributos do ritual">
+            <div class="attr">
+              <dt>Execução:</dt>
+              <dd id="card-execucao"></dd>
+            </div>
+            <div class="attr">
+              <dt>Alcance:</dt>
+              <dd id="card-alcance"></dd>
+            </div>
+            <div class="attr">
+              <dt>Alvo:</dt>
+              <dd id="card-alvo"></dd>
+            </div>
+            <div class="attr">
+              <dt>Duração:</dt>
+              <dd id="card-duracao"></dd>
+            </div>
+            <div class="attr">
+              <dt>Resistência:</dt>
+              <dd id="card-resistencia"></dd>
+            </div>
+          </dl>
+
+          <div class="art" aria-label="Espaço para ilustração 1:1">
+            <div class="art__inner">
+              <img
+                class="art__img"
+                id="card-img"
+                src=""
+                alt="Ilustração do ritual"
+                onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'art__hint\'>Sem imagem</span>'"
+              />
+            </div>
+          </div>
+        </section>
+
+        <div class="rule"></div>
+
+        <section class="desc">
+          <p id="card-descricao"></p>
+        </section>
+
+        <div class="rule"></div>
+
+        <footer class="footer" id="card-footer">
+          <!-- Upgrades serão inseridos dinamicamente -->
+        </footer>
+      </article>
+    </main>
+
+    <script>
+      // Aguardar DOM estar completamente carregado
+      document.addEventListener("DOMContentLoaded", function () {
+        const API_URL = "http://localhost:3000/rituais";
+
+        // Elementos do DOM
+        const ritualSelect = document.getElementById("ritual-select");
+        const loadingEl = document.getElementById("loading");
+        const errorEl = document.getElementById("error");
+        const cardEl = document.getElementById("card");
+
+        // Função para normalizar texto de execução
+        function formatarExecucao(execucao) {
+          const map = {
+            "acao-padrao": "Ação-padrão",
+            "acao-completa": "Ação-completa",
+            reacao: "Reação",
+          };
+          return map[execucao] || execucao;
+        }
+
+        // Função para capitalizar primeira letra
+        function capitalize(text) {
+          if (!text) return text;
+          return text.charAt(0).toUpperCase() + text.slice(1);
+        }
+
+        // Função para extrair custo de PE de texto
+        function extrairCustoPE(texto) {
+          if (!texto || texto === "-") return null;
+          const match = texto.match(/\(\+(\d+)\s*PE\)/i);
+          return match ? match[1] : null;
+        }
+
+        // Função para limpar texto do upgrade (remover custo PE)
+        function limparTextoUpgrade(texto) {
+          if (!texto || texto === "-") return null;
+          return texto.replace(/\(\+\d+\s*PE\):\s*/i, "").trim();
+        }
+
+        // Função para ajustar tamanho da fonte da descrição baseado no comprimento
+        function ajustarFonteDescricao(descricao) {
+          const descEl = document.getElementById("card-descricao");
+          if (!descEl) return;
+
+          const comprimento = descricao.length;
+          let fontSize;
+
+          // Ajusta o tamanho da fonte baseado no comprimento do texto
+          if (comprimento <= 150) {
+            fontSize = 14; // Texto curto: 14px
+          } else if (comprimento <= 250) {
+            fontSize = 13; // Texto médio: 13px
+          } else if (comprimento <= 350) {
+            fontSize = 12; // Texto longo: 12px
+          } else if (comprimento <= 450) {
+            fontSize = 11; // Texto muito longo: 11px
+          } else {
+            fontSize = 10; // Texto extremamente longo: 10px
+          }
+
+          descEl.style.fontSize = `${fontSize}px`;
+        }
+
+        // Função para ajustar tamanho da fonte dos upgrades
+        function ajustarFonteUpgrade(elemento, texto) {
+          if (!elemento || !texto) return;
+
+          const pElement = elemento.querySelector("p");
+          if (!pElement) return;
+
+          const comprimento = texto.length;
+          let fontSize;
+
+          // Ajusta o tamanho da fonte baseado no comprimento do texto
+          // Upgrades geralmente têm textos mais curtos, então ajustamos os limites
+          if (comprimento <= 80) {
+            fontSize = 14; // Texto curto: 14px
+          } else if (comprimento <= 150) {
+            fontSize = 13; // Texto médio: 13px
+          } else if (comprimento <= 220) {
+            fontSize = 12; // Texto longo: 12px
+          } else if (comprimento <= 300) {
+            fontSize = 11; // Texto muito longo: 11px
+          } else {
+            fontSize = 10; // Texto extremamente longo: 10px
+          }
+
+          pElement.style.fontSize = `${fontSize}px`;
+        }
+
+        // Carregar rituais
+        async function carregarRituais() {
+          try {
+            loadingEl.style.display = "block";
+            errorEl.style.display = "none";
+
+            const response = await fetch(API_URL);
+            if (!response.ok) {
+              throw new Error(
+                "Erro ao carregar rituais. Certifique-se de que o json-server está rodando em http://localhost:3000"
+              );
+            }
+
+            const rituais = await response.json();
+
+            // Limpar select
+            ritualSelect.innerHTML =
+              '<option value="">Selecione um ritual</option>';
+
+            // Agrupar rituais por nome (para evitar duplicatas)
+            const rituaisAgrupados = {};
+            rituais.forEach((ritual) => {
+              const key = `${ritual.nome}-${ritual.elemento}`;
+              if (!rituaisAgrupados[key]) {
+                rituaisAgrupados[key] = ritual;
+              }
+            });
+
+            // Adicionar opções ordenadas
+            Object.values(rituaisAgrupados)
+              .sort((a, b) => a.nome.localeCompare(b.nome))
+              .forEach((ritual) => {
+                const option = document.createElement("option");
+                option.value = ritual.id;
+                option.textContent = `${ritual.nome} (${capitalize(
+                  ritual.elemento
+                )} • Círculo ${ritual.circulo})`;
+                ritualSelect.appendChild(option);
+              });
+
+            loadingEl.style.display = "none";
+          } catch (error) {
+            console.error("Erro:", error);
+            errorEl.textContent = error.message;
+            errorEl.style.display = "block";
+            loadingEl.style.display = "none";
+          }
+        }
+
+        // Renderizar card
+        async function renderizarCard(ritualId) {
+          if (!ritualId) {
+            cardEl.classList.add("hidden");
+            return;
+          }
+
+          try {
+            const response = await fetch(`${API_URL}/${ritualId}`);
+            if (!response.ok) {
+              throw new Error("Erro ao carregar ritual");
+            }
+
+            const ritual = await response.json();
+
+            // Atualizar classe do elemento
+            cardEl.className = `card card--${ritual.elemento}`;
+
+            // Atualizar conteúdo com verificação de segurança
+            const setTextContent = (id, text) => {
+              const el = document.getElementById(id);
+              if (el) el.textContent = text;
+            };
+
+            setTextContent("card-title", ritual.nome.toUpperCase());
+            setTextContent(
+              "card-meta",
+              `${capitalize(ritual.elemento).toUpperCase()} • CÍRCULO ${
+                ritual.circulo
+              }`
+            );
+
+            setTextContent("card-execucao", formatarExecucao(ritual.execucao));
+            setTextContent("card-alcance", capitalize(ritual.alcance));
+            setTextContent("card-alvo", ritual.alvo);
+            setTextContent(
+              "card-duracao",
+              ritual.duracao === "-" ? "—" : capitalize(ritual.duracao)
+            );
+            setTextContent(
+              "card-resistencia",
+              ritual.resistencia === "-" ? "—" : ritual.resistencia
+            );
+
+            // Descrição com ajuste dinâmico de fonte
+            setTextContent("card-descricao", ritual.descricao);
+            ajustarFonteDescricao(ritual.descricao);
+
+            // Resetar o container da imagem primeiro
+            const artInner = document.querySelector(".art__inner");
+            if (artInner) {
+              artInner.innerHTML = `
+                <img
+                  class="art__img"
+                  id="card-img"
+                  src=""
+                  alt="Ilustração do ritual"
+                />
+              `;
+            }
+
+            // Imagem com verificação de segurança (usa o ID do ritual)
+            const imgEl = document.getElementById("card-img");
+            if (imgEl) {
+              imgEl.onerror = function () {
+                this.style.display = "none";
+                const container = this.parentElement;
+                if (container) {
+                  container.innerHTML =
+                    '<span class="art__hint">Sem imagem</span>';
+                }
+              };
+              imgEl.src = `assets/${ritual.id}.webp`;
+            }
+
+            // Footer com upgrades
+            const footerEl = document.getElementById("card-footer");
+            if (!footerEl) {
+              throw new Error("Elemento card-footer não encontrado");
+            }
+            footerEl.innerHTML = "";
+
+            // Discente
+            if (ritual.discente && ritual.discente !== "-") {
+              const custoPE = extrairCustoPE(ritual.discente);
+              const textoLimpo = limparTextoUpgrade(ritual.discente);
+
+              if (textoLimpo) {
+                const discenteEl = document.createElement("section");
+                discenteEl.className = "upgrade";
+                discenteEl.innerHTML = `
+                  <h2>DISCENTE${
+                    custoPE ? ` <span class="pe">(+${custoPE} PE)</span>` : ""
+                  }</h2>
+                  <p>${textoLimpo}</p>
+                `;
+                footerEl.appendChild(discenteEl);
+                ajustarFonteUpgrade(discenteEl, textoLimpo);
+              }
+            }
+
+            // Verdadeira
+            if (ritual.verdadeira && ritual.verdadeira !== "-") {
+              const custoPE = extrairCustoPE(ritual.verdadeira);
+              const textoLimpo = limparTextoUpgrade(ritual.verdadeira);
+
+              if (textoLimpo) {
+                const verdadeiraEl = document.createElement("section");
+                verdadeiraEl.className = "upgrade";
+                verdadeiraEl.innerHTML = `
+                  <h2>VERDADEIRA${
+                    custoPE ? ` <span class="pe">(+${custoPE} PE)</span>` : ""
+                  }</h2>
+                  <p>${textoLimpo}</p>
+                `;
+                footerEl.appendChild(verdadeiraEl);
+                ajustarFonteUpgrade(verdadeiraEl, textoLimpo);
+              }
+            }
+
+            // Mostrar card
+            cardEl.classList.remove("hidden");
+
+            // Atualizar título da página
+            document.title = `Carta — ${ritual.nome}`;
+          } catch (error) {
+            console.error("Erro ao renderizar card:", error);
+            errorEl.textContent = `Erro ao carregar dados do ritual: ${error.message}`;
+            errorEl.style.display = "block";
+            cardEl.classList.add("hidden");
+          }
+        }
+
+        // Event listener para select
+        ritualSelect.addEventListener("change", (e) => {
+          errorEl.style.display = "none"; // Limpar erros anteriores
+          renderizarCard(e.target.value);
+        });
+
+        // Validar elementos do DOM antes de inicializar
+        function validarElementos() {
+          const elementosObrigatorios = [
+            "ritual-select",
+            "loading",
+            "error",
+            "card",
+            "card-title",
+            "card-meta",
+            "card-execucao",
+            "card-alcance",
+            "card-alvo",
+            "card-duracao",
+            "card-resistencia",
+            "card-descricao",
+            "card-img",
+            "card-footer",
+          ];
+
+          const elementosFaltando = elementosObrigatorios.filter(
+            (id) => !document.getElementById(id)
+          );
+
+          if (elementosFaltando.length > 0) {
+            console.error("Elementos faltando:", elementosFaltando);
+            errorEl.textContent = `Erro: Elementos HTML não encontrados: ${elementosFaltando.join(
+              ", "
+            )}`;
+            errorEl.style.display = "block";
+            return false;
+          }
+
+          return true;
+        }
+
+        // Inicializar
+        if (validarElementos()) {
+          carregarRituais();
+        }
+      }); // Fim do DOMContentLoaded
+    </script>
+  </body>
+</html>
