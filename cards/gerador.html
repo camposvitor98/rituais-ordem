@@ -501,16 +501,18 @@
           let fontSize;
 
           // Ajusta o tamanho da fonte baseado no comprimento do texto
-          if (comprimento <= 150) {
+          if (comprimento <= 200) {
             fontSize = 14; // Texto curto: 14px
-          } else if (comprimento <= 250) {
+          } else if (comprimento <= 300) {
             fontSize = 13; // Texto médio: 13px
-          } else if (comprimento <= 350) {
+          } else if (comprimento <= 400) {
             fontSize = 12; // Texto longo: 12px
-          } else if (comprimento <= 450) {
+          } else if (comprimento <= 500) {
             fontSize = 11; // Texto muito longo: 11px
+          } else if (comprimento <= 600) {
+            fontSize = 10; // Texto muito longo: 11px
           } else {
-            fontSize = 10; // Texto extremamente longo: 10px
+            fontSize = 9; // Texto extremamente longo: 10px
           }
 
           descEl.style.fontSize = `${fontSize}px`;
@@ -530,14 +532,16 @@
           // Upgrades geralmente têm textos mais curtos, então ajustamos os limites
           if (comprimento <= 80) {
             fontSize = 14; // Texto curto: 14px
-          } else if (comprimento <= 150) {
+          } else if (comprimento <= 120) {
             fontSize = 13; // Texto médio: 13px
-          } else if (comprimento <= 220) {
+          } else if (comprimento <= 160) {
             fontSize = 12; // Texto longo: 12px
-          } else if (comprimento <= 300) {
+          } else if (comprimento <= 200) {
             fontSize = 11; // Texto muito longo: 11px
+          } else if (comprimento <= 240) {
+            fontSize = 10; // Texto muito longo: 11px
           } else {
-            fontSize = 10; // Texto extremamente longo: 10px
+            fontSize = 9; // Texto extremamente longo: 10px
           }
 
           pElement.style.fontSize = `${fontSize}px`;
