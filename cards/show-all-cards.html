@@ -384,40 +384,7 @@
         return texto.replace(/\(\+\d+\s*PE\):\s*/i, "").trim();
       }
 
-      // Função para ajustar tamanho da fonte da descrição
-      function ajustarFonteDescricao(elemento, descricao) {
-        if (!elemento || !descricao) return;
-
-        const comprimento = descricao.length;
-        let fontSize;
-
-        if (comprimento <= 150) fontSize = 14;
-        else if (comprimento <= 250) fontSize = 13;
-        else if (comprimento <= 350) fontSize = 12;
-        else if (comprimento <= 450) fontSize = 11;
-        else fontSize = 10;
-
-        elemento.style.fontSize = `${fontSize}px`;
-      }
-
-      // Função para ajustar tamanho da fonte dos upgrades
-      function ajustarFonteUpgrade(elemento, texto) {
-        if (!elemento || !texto) return;
-
-        const pElement = elemento.querySelector("p");
-        if (!pElement) return;
-
-        const comprimento = texto.length;
-        let fontSize;
-
-        if (comprimento <= 80) fontSize = 14;
-        else if (comprimento <= 150) fontSize = 13;
-        else if (comprimento <= 220) fontSize = 12;
-        else if (comprimento <= 300) fontSize = 11;
-        else fontSize = 10;
-
-        pElement.style.fontSize = `${fontSize}px`;
-      }
+function ajustarFonteDescricao(descricao) { const descEl = document.getElementById("card-descricao"); if (!descEl) return; const comprimento = descricao.length; let fontSize; // Ajusta o tamanho da fonte baseado no comprimento do texto if (comprimento <= 200) { fontSize = 14; // Texto curto: 14px } else if (comprimento <= 300) { fontSize = 13; // Texto médio: 13px } else if (comprimento <= 400) { fontSize = 12; // Texto longo: 12px } else if (comprimento <= 500) { fontSize = 11; // Texto muito longo: 11px } else if (comprimento <= 600) { fontSize = 10; // Texto muito longo: 11px } else { fontSize = 9; // Texto extremamente longo: 10px } descEl.style.fontSize = ${fontSize}px; } // Função para ajustar tamanho da fonte dos upgrades function ajustarFonteUpgrade(elemento, texto) { if (!elemento || !texto) return; const pElement = elemento.querySelector("p"); if (!pElement) return; const comprimento = texto.length; let fontSize; // Ajusta o tamanho da fonte baseado no comprimento do texto // Upgrades geralmente têm textos mais curtos, então ajustamos os limites if (comprimento <= 80) { fontSize = 14; // Texto curto: 14px } else if (comprimento <= 120) { fontSize = 13; // Texto médio: 13px } else if (comprimento <= 160) { fontSize = 12; // Texto longo: 12px } else if (comprimento <= 200) { fontSize = 11; // Texto muito longo: 11px } else if (comprimento <= 240) { fontSize = 10; // Texto muito longo: 11px } else { fontSize = 9; // Texto extremamente longo: 10px } pElement.style.fontSize = ${fontSize}px; }
 
       // Criar um card
       function criarCard(ritual) {
