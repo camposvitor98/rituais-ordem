@@ -391,11 +391,11 @@
         const comprimento = descricao.length;
         let fontSize;
 
-        if (comprimento <= 250) fontSize = 14;
-        else if (comprimento <= 350) fontSize = 13;
-        else if (comprimento <= 450) fontSize = 12;
-        else if (comprimento <= 550) fontSize = 11;
-        else if (comprimento <= 650) fontSize = 10;
+        if (comprimento <= 300) fontSize = 14;
+        else if (comprimento <= 450) fontSize = 13;
+        else if (comprimento <= 600) fontSize = 12;
+        else if (comprimento <= 750) fontSize = 11;
+        else if (comprimento <= 900) fontSize = 10;
         else fontSize = 9;
 
         elemento.style.fontSize = `${fontSize}px`;
