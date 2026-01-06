@@ -391,11 +391,12 @@
         const comprimento = descricao.length;
         let fontSize;
 
-        if (comprimento <= 150) fontSize = 14;
-        else if (comprimento <= 250) fontSize = 13;
-        else if (comprimento <= 350) fontSize = 12;
-        else if (comprimento <= 450) fontSize = 11;
-        else fontSize = 10;
+        if (comprimento <= 250) fontSize = 14;
+        else if (comprimento <= 350) fontSize = 13;
+        else if (comprimento <= 450) fontSize = 12;
+        else if (comprimento <= 550) fontSize = 11;
+        else if (comprimento <= 650) fontSize = 10;
+        else fontSize = 9;
 
         elemento.style.fontSize = `${fontSize}px`;
       }
@@ -410,11 +411,12 @@
         const comprimento = texto.length;
         let fontSize;
 
-        if (comprimento <= 80) fontSize = 14;
+        if (comprimento <= 100) fontSize = 14;
         else if (comprimento <= 150) fontSize = 13;
-        else if (comprimento <= 220) fontSize = 12;
-        else if (comprimento <= 300) fontSize = 11;
-        else fontSize = 10;
+        else if (comprimento <= 200) fontSize = 12;
+        else if (comprimento <= 250) fontSize = 11;
+        else if (comprimento <= 300) fontSize = 10;
+        else fontSize = 9;
 
         pElement.style.fontSize = `${fontSize}px`;
       }
