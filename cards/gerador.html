@@ -499,7 +499,9 @@
 
           const comprimento = descricao.length;
           let fontSize;
-
+console.log("1 - len:", descricao.length);
+console.log("1 - preview:", descricao.slice(0, 120));
+console.log("1 - tail:", descricao.slice(-120));
           // Ajusta o tamanho da fonte baseado no comprimento do texto
           if (comprimento <= 200) {
             fontSize = 14; // Texto curto: 14px
@@ -527,6 +529,9 @@
 
           const comprimento = texto.length;
           let fontSize;
+          console.log("2 - len:", descricao.length);
+console.log("2 - preview:", descricao.slice(0, 120));
+console.log("2 - tail:", descricao.slice(-120));
 
           // Ajusta o tamanho da fonte baseado no comprimento do texto
           // Upgrades geralmente têm textos mais curtos, então ajustamos os limites
