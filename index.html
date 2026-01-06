@@ -336,6 +336,51 @@
           font-size: var(--fs-14);
         }
       }
+
+      @media print {
+        @page {
+          margin: 1cm;
+        }
+
+        :root {
+          --card-w: 9cm;
+          --card-h: 13cm;
+          --art: 3.2cm;
+        }
+
+        body {
+          background: #ffffff;
+          color: #000000;
+        }
+
+        .page {
+          padding: 0;
+        }
+
+        .header,
+        #loading,
+        #error {
+          display: none !important;
+        }
+
+        .cards-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 0.4cm;
+        }
+
+        .card {
+          max-width: var(--card-w);
+          height: var(--card-h);
+          box-shadow: none;
+          break-inside: avoid;
+          page-break-inside: avoid;
+        }
+
+        .card:nth-child(4n) {
+          break-after: page;
+          page-break-after: always;
+        }
+      }
     </style>
   </head>
 
